@@ -34,8 +34,8 @@ library TokenLibrary{
         ERC20_Interface token;
         //Enum state of the swap
         SwapState current_state;
-        //Start date, end_date, multiplier duration,start_value,end_value
-        uint[6] contract_details;
+        //Start date, end_date, multiplier duration,start_value,end_value,fee
+        uint[7] contract_details;
         // pay_to_x refers to the amount of the base token (a or b) to pay to the long or short side based upon the share_long and share_short
         uint pay_to_long;
         uint pay_to_short;
@@ -76,7 +76,7 @@ library TokenLibrary{
     function createSwap(SwapStorage storage self,uint _amount, address _senderAdd) internal{
         require(self.current_state == SwapState.created && msg.sender == self.creator  && _amount > 0 || (msg.sender == self.userContract && _senderAdd == self.creator) && _amount > 0);
         self.factory = Factory_Interface(self.factory_address);
-        (self.oracle_address,self.contract_details[3],self.contract_details[2],self.token_address) = self.factory.getVariables();
+        getVariables(self);
         self.contract_details[1] = self.contract_details[0].add(self.contract_details[3].mul(86400));
         assert(self.contract_details[1]-self.contract_details[0] < 28*86400);
         self.token_amount = _amount;
@@ -88,6 +88,10 @@ library TokenLibrary{
         oracleQuery(self);
         emit SwapCreation(self.token_address,self.contract_details[0],self.contract_details[1],self.token_amount);
         self.current_state = SwapState.started;
+    }
+
+    function getVariables(SwapStorage storage self) internal view{
+        (self.oracle_address,self.contract_details[3],self.contract_details[2],self.token_address,self.contract_details[6]) = self.factory.getVariables();
     }
 
     /*
@@ -131,7 +135,7 @@ library TokenLibrary{
     */
     function Calculate(SwapStorage storage self) internal{
         uint ratio;
-        self.token_amount = self.token_amount.mul(995).div(1000);
+        self.token_amount = self.token_amount.mul(10000-self.contract_details[6]).div(10000);
         if (self.contract_details[4] > 0 && self.contract_details[5] > 0)
             ratio = (self.contract_details[5]).mul(100000).div(self.contract_details[4]);
         else if (self.contract_details[5] > 0)
