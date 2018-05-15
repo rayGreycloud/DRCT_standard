@@ -26,6 +26,7 @@ contract Factory {
     address public token;
     //A fee for creating a swap in wei.  Plan is for this to be zero, however can be raised to prevent spam
     uint public fee;
+    uint public swapFee;
     //Duration of swap contract in days
     uint public duration;
     //Multiplier of reference rate.  2x refers to a 50% move generating a 100% move in the contract payout values
@@ -88,10 +89,14 @@ contract Factory {
 
     /*
     * Updates the fee amount
-    * @param "_fee": The new fee amount
+    * @param "_fee": The new fee amount(in wei) / cost to deploy contract
+    * @param "_swapFee": The new swap fee amount ( self.token_amount = self.token_amount.mul(10000-fee).div(10000);)
+    * @Note: 1 for the swap fee is .01% 
     */
-    function setFee(uint _fee) public onlyOwner() {
+    function setFee(uint _fee,uint _swapFee) public onlyOwner() {
+        require (_swapFee < 10000);
         fee = _fee;
+        swapFee = _swapFee;
     }
 
     /*
@@ -228,8 +233,8 @@ contract Factory {
     *@returns multiplier The multiplier for the swap
     *@returns token The address of token 
     */
-    function getVariables() public view returns (address, uint, uint, address){
-        return (oracle_address,duration, multiplier, token);
+    function getVariables() public view returns (address, uint, uint, address,uint){
+        return (oracle_address,duration, multiplier, token,swapFee);
     }
 
     /*

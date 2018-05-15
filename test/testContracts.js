@@ -395,7 +395,7 @@ contract('Base Tests', function(accounts) {
 		assert(balance2 >= newbal2 - 1 && balance2 <= newbal2 ,"Balance2 should change correctly");
 		});
 		it("Test Withdrawal and no trades", async function(){
-			await factory.setFee(web3.toWei(1, 'ether'));
+			await factory.setFee(web3.toWei(1, 'ether'),50);
 			await oracle.StoreDocument(o_startdate,1000);
 		    await oracle.StoreDocument(o_enddate,1500);
 		    var balance0 = eval(await (web3.fromWei(web3.eth.getBalance(accounts[0]), 'ether').toFixed(0)));
