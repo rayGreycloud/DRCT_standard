@@ -90,7 +90,7 @@ library TokenLibrary{
         self.current_state = SwapState.started;
     }
 
-    function getVariables(SwapStorage storage self) internal view{
+    function getVariables(SwapStorage storage self) internal{
         (self.oracle_address,self.contract_details[3],self.contract_details[2],self.token_address,self.contract_details[6]) = self.factory.getVariables();
     }
 

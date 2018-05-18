@@ -9,7 +9,7 @@ var Wrapped_Ether = artifacts.require("Wrapped_Ether");
 var Factory = artifacts.require("Factory");
 var UserContract= artifacts.require("UserContract");
 var Deployer = artifacts.require("Deployer");
-var MemberCoin = artifacts.require("MemberCoin");
+var Membership = artifacts.require("Membership");
 
 module.exports =async function(callback) {
       let oracle;
@@ -17,13 +17,13 @@ module.exports =async function(callback) {
     let base;
     let deployer;
     let userContract;
-    let memberCoin;
-    memberCoin = await MemberCoin.deployed();
+    let membership;
+    membership = await Membership.deployed();
       oracle = await Oracle.deployed();
       factory = await Factory.deployed();
       console.log('This is your factory address  :  ',factory.address)
       await factory.setVariables(1000000000000000,7,1);
-      await factory.setMemberContract(memberCoin.address);
+      await factory.setMemberContract(membership.address);
       await factory.setWhitelistedMemberTypes([0]);
       base = await Wrapped_Ether.deployed();
       userContract = await UserContract.deployed();
