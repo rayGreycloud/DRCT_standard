@@ -16,7 +16,7 @@ contract('Contracts', function(accounts) {
         assert(await membership.getMembershipType(accounts[0]) > 0, "MembershipType should not be zero");
         console.log("ensure member type is greater than zero");
     });
-/**
+
     it("Should assign membership details to new address", async function () {
         await membership.updateMemberAddress(accounts[0], accounts[1], {from: accounts[3]});
         console.log("updateMemberAddress");
@@ -24,7 +24,7 @@ contract('Contracts', function(accounts) {
         assert(await membership.getMembershipType(accounts[1]) > 0, "MembershipType should not be zero");
         console.log("ensure member type is greater than zero");
     });
-*/
+
     it("Should change fee using setFee from owner account", async function () {
         await membership.setFee(15, {from: accounts[3]});
         console.log("membership.setFee set to 15");
@@ -39,14 +39,13 @@ contract('Contracts', function(accounts) {
         console.log("MembershipType should be 7");
     });
 
-    /*how to*/
-/** it("Should get members accounts list/array", async function () {
-        let memAccts[] = await membership.getMembers({from: accounts[4]});
+    it("Should get members accounts list/array", async function () {
+        let memAccts = await membership.getMembers({from: accounts[4]});
         console.log("membership.getMembers array- currently only one member on test");
-        assert(await memAccts[] == [0,accounts[1]], "Members accounts list");
+        assert(await memAccts == accounts[1], "Members accounts list");
         console.log("Membership array should contain account 1");
     });
-*/
+
     /*how to*/
 /** it("Should get member information", async function () {
         await membership.getMember({from: accounts[1]});

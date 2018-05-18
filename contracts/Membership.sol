@@ -76,7 +76,7 @@ contract Membership {
         Member storage newAddress = members[_to];
         newAddress.memberId = currentAddress.memberId;
         newAddress.membershipType = currentAddress.membershipType;
-		membersAccts[currentAddress.memberId] = _to;
+		membersAccts[currentAddress.memberId-1] = _to;
         currentAddress.memberId = 0;
         currentAddress.membershipType = 0;
         emit UpdateMemberAddress(_from, _to);
