@@ -4,10 +4,8 @@ import "./SafeMath.sol";
 import "../interfaces/Factory_Interface.sol";
 
 /**
-*The DRCT_Token is an ERC20 compliant token representing the payout of the swap contract
-*specified in the Factory contract.
-*Each Factory contract is specified one DRCT Token and the token address can contain many
-*different swap contracts that are standardized at the Factory level.
+*The DRCTLibrary contains the reference code used in the DRCT_Token (an ERC20 compliant token
+*representing the payout of the swap contract specified in the Factory contract.
 */
 library DRCTLibrary{
 
@@ -51,14 +49,17 @@ library DRCTLibrary{
     
     /*Functions*/
     /**
-    *@dev Constructor - sets values for token name and token supply, as well as the 
-    *master_contract, the swap.
-    *@param _factory 
+    *@dev Sets values for the TokenStorage struct 
+    *@param _factory is the master_contract address, the swap
     */
     function startToken(TokenStorage storage self,address _factory) public {
         self.master_contract = _factory;
     }
 
+    /**
+    *@dev ensures the member is whitelisted
+    *@param _member is the member address that is chekced agaist the whitelist
+    */
     function isWhitelisted(TokenStorage storage self,address _member) internal view returns(bool){
         Factory_Interface _factory = Factory_Interface(self.master_contract);
         return _factory.isWhitelisted(_member);
@@ -77,14 +78,16 @@ library DRCTLibrary{
         self.total_supply = self.total_supply.add(_supply);
         //Update the total balance of the owner
         self.user_total_balances[_owner] = self.user_total_balances[_owner].add(_supply);
-        //If the user has not entered any swaps already, push a zeroed address to their user_swaps mapping to prevent default value conflicts in user_swaps_index
+        //If the user has not entered any swaps already, push a zeroed address to their user_swaps
+        // mapping to prevent default value conflicts in user_swaps_index
         if (self.user_swaps[_owner].length == 0)
             self.user_swaps[_owner].push(address(0x0));
         //Add a new swap index for the owner
         self.user_swaps_index[_owner][_swap] = self.user_swaps[_owner].length;
         //Push a new swap address to the owner's swaps
         self.user_swaps[_owner].push(_swap);
-        //Push a zeroed Balance struct to the swap balances mapping to prevent default value conflicts in swap_balances_index
+        //Push a zeroed Balance struct to the swap balances mapping to prevent default value
+        // conflicts in swap_balances_index
         self.swap_balances[_swap].push(Balance({
             owner: 0,
             amount: 0
@@ -101,8 +104,8 @@ library DRCTLibrary{
 
     /**
     *@dev Called by the factory contract, and pays out to a _party
-    *@param _party being paid
-    *@param _swap
+    *@param _party address of party being paid
+    *@param _swap address
     */
     function pay(TokenStorage storage self,address _party, address _swap) public{
         require(msg.sender == self.master_contract);
@@ -173,7 +176,8 @@ library DRCTLibrary{
             //If the current swap will be entirely depleted - we remove all references to it for the sender
             if (_amount >= from_user_bal.amount) {
                 _amount -= from_user_bal.amount;
-                //If this swap is to be removed, we know it is the (current) last swap in the user's user_swaps list, so we can simply decrement the length to remove it
+                //If this swap is to be removed, we know it is the (current) last swap in the 
+                //user's user_swaps list, so we can simply decrement the length to remove it
                 self.user_swaps[_from].length = self.user_swaps[_from].length.sub(1);
                 //Remove the user swap index for this swap
                 delete self.user_swaps_index[_from][from_swaps[i]];
@@ -209,7 +213,8 @@ library DRCTLibrary{
                 uint to_swap_balance_index = self.swap_balances_index[from_swaps[i]][_to];
                 //If the _to address already holds tokens from this swap
                 if (self.user_swaps_index[_to][from_swaps[i]] != 0) {
-                    //Because both addresses are in this swap, and neither will be removed, we simply update both swap balances
+                    //Because both addresses are in this swap, and neither will be removed, we 
+                    //simply update both swap balances
                     self.swap_balances[from_swaps[i]][to_swap_balance_index].amount = self.swap_balances[from_swaps[i]][to_swap_balance_index].amount.add(_amount);
                 } else {
                     //Prepare to add a new swap by assigning the swap an index for _to

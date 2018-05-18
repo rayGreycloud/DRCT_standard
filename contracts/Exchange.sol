@@ -11,7 +11,7 @@ pragma solidity ^0.4.21;
 contract Exchange{ 
     using SafeMath for uint256;
 
-    /*VARIABLES*/
+    /*Variables*/
     address public owner; //The owner of the market contract
     
     //This is the base data structure for an order (the maker of the order and the price)
@@ -42,7 +42,7 @@ contract Exchange{
     uint internal order_nonce;
 
     /*Modifiers*/
-    /// @dev Access modifier for Owner functionality
+    // @dev Access modifier for Owner functionality
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
@@ -94,6 +94,7 @@ contract Exchange{
         userOrders[msg.sender].push(order_nonce);
         order_nonce += 1;
     }
+    
     /**
     *@dev unlist allows a party to remove their order from the orderbook
     *@param _orderId is the uint256 ID of order
@@ -124,7 +125,7 @@ contract Exchange{
         emit Sale(msg.sender,_order.asset,_order.amount,_order.price);
     }
 
-    /*
+    /**
     *@dev getOrder lists the price,amount, and maker of a specific token for a sale
     *@param _orderId uint256 ID of order
     *@return address of the party selling
@@ -137,7 +138,7 @@ contract Exchange{
         return (_order.maker,_order.price,_order.amount,_order.asset);
     }
 
-    /*
+    /**
     *@dev allows the owner to change who the owner is
     *@param _owner is the address of the new owner
     */
@@ -145,7 +146,7 @@ contract Exchange{
         owner = _owner;
     }
 
-    /*
+    /**
     *@notice This allows the owner to stop a malicious party from spamming the orderbook
     *@dev Allows the owner to blacklist addresses from using this exchange
     *@param _address the address of the party to blacklist
@@ -156,7 +157,7 @@ contract Exchange{
         blacklist[_address] = _motion;
     }
 
-    /*
+    /**
     *@dev Allows parties to see if one is blacklisted
     *@param _address the address of the party to blacklist
     *@return bool true for is blacklisted
@@ -165,16 +166,16 @@ contract Exchange{
         return blacklist[_address];
     }
 
-    /*
+    /**
     *@dev getOrderCount allows parties to query how many orders are on the book
-    *@param _token address used to count the number of orders?
+    *@param _token address used to count the number of orders
     *@return _uint of the number of orders in the orderbook
     */
     function getOrderCount(address _token) public constant returns(uint) {
         return forSale[_token].length;
     }
 
-    /*
+    /**
     *@dev Gets number of open orderbooks
     *@return _uint of the number of tokens with open orders
     */
@@ -182,9 +183,9 @@ contract Exchange{
         return openBooks.length;
     }
 
-    /*
+    /**
     *@dev getOrderCount allows parties to query how many orders are on the book
-    *@param _token address used to count the number of orders?
+    *@param _token address used to count the number of orders
     *@return _uint of the number of orders in the orderbook
     */
     function getOrders(address _token) public constant returns(uint[]) {
@@ -194,7 +195,7 @@ contract Exchange{
     /*
     *@dev An internal function to update mappings when an order is removed from the book
     *@param _orderId is the uint256 ID of order
-    @param _order is the struct containing the details of the order
+    *@param _order is the struct containing the details of the order
     */
     function unLister(uint256 _orderId, Order _order) internal{
         uint256 tokenIndex = forSaleIndex[_orderId];

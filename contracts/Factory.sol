@@ -13,6 +13,7 @@ import "./interfaces/Membership_Interface.sol";
 */
 contract Factory {
     using SafeMath for uint256;
+    
     /*Variables*/
     //Addresses of the Factory owner and oracle. For oracle information, 
     //check www.github.com/DecentralizedDerivatives/Oracles
@@ -61,10 +62,17 @@ contract Factory {
         owner = msg.sender;
     }
 
+    /**
+    @param _memberContract address
+    */
     function setMemberContract(address _memberContract) public onlyOwner() {
         memberContract = _memberContract;
     }
-
+    
+    /**
+    @dev assigns member types
+    @param _memberTypes member types
+    */
     function setWhitelistedMemberTypes(uint[] _memberTypes) public onlyOwner(){
         whitelistedTypes[0] = false;
         for(uint i = 0; i<_memberTypes.length;i++){
@@ -72,6 +80,11 @@ contract Factory {
         }
     }
 
+    /**
+    *@dev checks if member is whitelisted
+    *@param _member address
+    *@return true if member is whitelited
+    */
     function isWhitelisted(address _member) public view returns (bool){
         Membership_Interface Member = Membership_Interface(memberContract);
         return whitelistedTypes[Member.getMembershipType(_member)];
@@ -80,18 +93,18 @@ contract Factory {
 
     /**
     *@dev Gets long and short token addresses based on specified date
-    *@param uint_date
-    *@return short and long tokens' addresses
+    *@param _date
+    *@return short and long tokens' addresses for the date specified
     */
     function getTokens(uint _date) public view returns(address, address){
         return(long_tokens[_date],short_tokens[_date]);
     }
 
-    /*
-    * Updates the fee amount
-    * @param "_fee": The new fee amount(in wei) / cost to deploy contract
-    * @param "_swapFee": The new swap fee amount ( self.token_amount = self.token_amount.mul(10000-fee).div(10000);)
-    * @Note: 1 for the swap fee is .01% 
+    /**
+    *Updates the fee amount
+    *@param _fee The new fee amount(in wei) / cost to deploy contract
+    *@param _swapFee The new swap fee amount ( self.token_amount = self.token_amount.mul(10000-fee).div(10000);)
+    *@Note 1 for the swap fee is .01% 
     */
     function setFee(uint _fee,uint _swapFee) public onlyOwner() {
         require (_swapFee < 10000);
@@ -99,24 +112,24 @@ contract Factory {
         swapFee = _swapFee;
     }
 
-    /*
-    * Sets the deployer address
-    * @param "_deployer": The new deployer address
+    /**
+    *Sets the deployer address
+    *@param _deployer The new deployer address
     */
     function setDeployer(address _deployer) public onlyOwner() {
         deployer_address = _deployer;
         deployer = Deployer_Interface(_deployer);
     }
 
-    /*
-    * Sets the user_contract address
-    * @param "_userContract": The new userContract address
+    /**
+    *Sets the user_contract address
+    *@param _userContract The new userContract address
     */
     function setUserContract(address _userContract) public onlyOwner() {
         user_contract = _userContract;
     }
 
-    /*
+    /**
     *@dev Sets token ratio, swap duration, and multiplier variables for a swap
     *@param _token_ratio the ratio of the tokens
     *@param _duration the duration of the swap, in days
@@ -128,7 +141,7 @@ contract Factory {
         multiplier = _multiplier;
     }
 
-    /*
+    /**
     *@dev Sets the addresses of the tokens used for the swap
     *@param _token The address of a token to be used  as collateral
     */
@@ -154,8 +167,6 @@ contract Factory {
     /**
     *@dev Deploys DRCT tokens for given start date
     *@param _start_date of contract
-    *@param long if true
-    *@return returns token address of deployed contract
     */
     function deployTokenContract(uint _start_date) public{
         address _token;
@@ -175,9 +186,7 @@ contract Factory {
     *@param _supply The number of tokens to create
     *@param _party the address to send the tokens to
     *@param _start_date the start date of the contract?       
-    *@returns ltoken the address of the created DRCT long tokens?
-    *@returns stoken the address of the created DRCT short tokens?
-    *@returns token_ratio The ratio of the created DRCT token
+    *@return token_ratio The addresses for the long and shor tokens and the ratio of the created DRCT token
     */
     function createToken(uint _supply, address _party, uint _start_date) public returns (address, address, uint) {
         require(created_contracts[msg.sender] == _start_date);
@@ -209,7 +218,7 @@ contract Factory {
 
     /**
     *@dev Allows the owner to pull contract creation fees
-    *@return the withdrawal fee _val and the balance where is the return function?
+    *@return the withdrawal fee _val and the balance
     */
     function withdrawFees() public onlyOwner(){
         Wrapped_Ether_Interface token_interface = Wrapped_Ether_Interface(token);
@@ -226,21 +235,21 @@ contract Factory {
     function() public payable {
     }
 
-    /*
+    /**
     *@dev Returns a tuple of many private variables
-    *@returns oracle_adress": The address of the oracle
-    *@returns duration The duration of the swap
-    *@returns multiplier The multiplier for the swap
-    *@returns token The address of token 
+    *@return oracle_adress The address of the oracle
+    *@return duration The duration of the swap
+    *@return multiplier The multiplier for the swap
+    *@return token The address of token 
     */
     function getVariables() public view returns (address, uint, uint, address,uint){
         return (oracle_address,duration, multiplier, token,swapFee);
     }
 
-    /*
-    * Pays out to a DRCT token
-    * @param "_party": The address being paid
-    * @param "_long": Whether the _party is long or not
+    /**
+    *Pays out to a DRCT token
+    *@param _party The address being paid
+    *@param _long Whether the _party is long or not
     */
     function payToken(address _party, address _token_add) public {
         require(created_contracts[msg.sender] > 0);

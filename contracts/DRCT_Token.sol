@@ -18,27 +18,27 @@ contract DRCT_Token {
     /**
     *@dev Constructor - sets values for token name and token supply, as well as the 
     *master_contract, the swap.
-    *@param _factory 
+    *@param _factory is the factory address
     */
     function DRCT_Token(address _factory) public {
         drct.startToken(_factory);
     }
 
-  /**
+    /**
     *@dev Token Creator - This function is called by the factory contract and creates new tokens
     *for the user
     *@param _supply amount of DRCT tokens created by the factory contract for this swap
-    *@param _owner
-    *@param _swap
-  */
-  function createToken(uint _supply, address _owner, address _swap) public{
+    *@param _owner is the owner of the tokens being created
+    *@param _swap is the address of the swap
+    */
+    function createToken(uint _supply, address _owner, address _swap) public{
         drct.createToken(_supply,_owner,_swap);
     }
 
     /**
     *@dev Called by the factory contract, and pays out to a _party
     *@param _party being paid
-    *@param _swap
+    *@param _swap is the address of the swap
     */
     function pay(address _party, address _swap) public{
         drct.pay(_party,_swap);
@@ -123,9 +123,9 @@ contract DRCT_Token {
     }
 
     /**
-    *@dev Look up how much the spender or contract is allowed to spend?
-    *@param _owner 
-    *@param _spender party or contract? approved for transfering funds 
+    *@dev Look up how much the spender is allowed to spend
+    *@param _owner specified address
+    *@param _spender party approved for transfering funds 
     *@return the allowed amount _spender can spend of _owner's balance
     */
     function allowance(address _owner, address _spender) public constant returns (uint) {
