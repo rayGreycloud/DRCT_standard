@@ -34,30 +34,23 @@ contract('Membership', function(accounts) {
         assert(await memAccts == accounts[1], "Members accounts list");
     });
 
-
-/** it("Should get member information", async function () {
-        await membership.getMember(accounts[1],{from: accounts[6]});
-        console.log("membership.getMember- info for member 1");
-        assert(membership.members.memberId == 2 && membership.members.membershipType == 7, "Membership should be 1 and id 2");
-        console.log("Membership count should be 1");
+    it("Should get member information", async function () {
+        let memberInfo = await membership.getMember(accounts[1], {from: accounts[6]});
+        assert(memberInfo = [1,7] , "Membership should be 7 and id 1");
     });
-*/
 
     it("Should count number of members", async function () {
         let memCount = await membership.countMembers({from: accounts[4]});
         assert(await memCount == 1, "Membership count should be 1");
     });
 
-/*how to*/
-/*  it("Should get membershipType", async function () {
+    it("Should get membershipType", async function () {
         let oldMemberAcct = await membership.getMembershipType(accounts[0], {from: accounts[1]});
         let newMemberAcct = await membership.getMembershipType(accounts[1], {from: accounts[1]});
-        console.log("updateMemberAddress");
         assert(oldMemberAcct  == 0, "MembershipType should be zero");
         assert(newMemberAcct == 7, "MembershipType should be 7");
-        console.log("ensure member type is greater than zero");
     });
- */
+
     it("Should allow owner to change contract owner", async function () {
         await membership.setOwner(accounts[5], {from: accounts[3]});
         assert(membership.owner = accounts[5], "owner should be account 5");
