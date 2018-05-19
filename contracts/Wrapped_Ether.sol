@@ -12,7 +12,6 @@ contract Wrapped_Ether {
     using SafeMath for uint256;
 
     /*Variables*/
-
     //ERC20 fields
     string public name = "Wrapped Ether";
     uint public total_supply;
@@ -23,15 +22,13 @@ contract Wrapped_Ether {
     mapping(address => mapping (address => uint)) internal allowed;
 
     /*Events*/
-
     event Transfer(address indexed _from, address indexed _to, uint _value);
     event Approval(address indexed _owner, address indexed _spender, uint _value);
     event StateChanged(bool _success, string _message);
 
     /*Functions*/
-
     /**
-    @dev This function creates tokens equal in value to the amount sent to the contract
+    *@dev This function creates tokens equal in value to the amount sent to the contract
     */
     function createToken() public payable {
         require(msg.value > 0);
@@ -39,9 +36,9 @@ contract Wrapped_Ether {
         total_supply = total_supply.add(msg.value);
     }
 
-    /*
+    /**
     *This function 'unwraps' an _amount of Ether in the sender's balance by transferring Ether to them
-    *@param "_amount": The amount of the token to unwrap
+    *@param _amount The amount of the token to unwrap
     */
     function withdraw(uint _value) public {
         balances[msg.sender] = balances[msg.sender].sub(_value);
@@ -49,14 +46,19 @@ contract Wrapped_Ether {
         msg.sender.transfer(_value);
     }
 
-    //Returns the balance associated with the passed in _owner
-    function balanceOf(address _owner) public constant returns (uint bal) { return balances[_owner]; }
+    /**
+    *@dev get balance for specified owner
+    *@param _owner
+    *@return Returns the balance associated with the passed in _owner
+    */
+    function balanceOf(address _owner) public constant returns (uint bal) { 
+        return balances[_owner]; 
+    }
 
-    /*
-    *Allows for a transfer of tokens to _to
-    *
-    *@param "_to": The address to send tokens to
-    *@param "_amount": The amount of tokens to send
+    /**
+    *@dev Allows for a transfer of tokens to _to
+    *@param _to The address to send tokens to
+    *@param _amount The amount of tokens to send
     */
     function transfer(address _to, uint _amount) public returns (bool) {
         if (balances[msg.sender] >= _amount
@@ -71,7 +73,7 @@ contract Wrapped_Ether {
         }
     }
 
-    /*
+    /**
     *Allows an address with sufficient spending allowance to send tokens on the behalf of _from
     *@param _from The address to send tokens from
     *@param _to The address to send tokens to
@@ -92,8 +94,10 @@ contract Wrapped_Ether {
         }
     }
 
-    /*
-    @dev this function Approves a _spender an _amount of tokens to use
+    /**
+    *@dev this function Approves a _spender an _amount of tokens to use
+    *@param _spender address to approve to spend
+    *@param _amount the approve spender is allowed to tranfer/spend
     */
     function approve(address _spender, uint _amount) public returns (bool) {
         allowed[msg.sender][_spender] = _amount;
@@ -101,9 +105,13 @@ contract Wrapped_Ether {
         return true;
     }
 
-    /*
-    *Returns the remaining allowance of tokens granted to the _spender from the _owner
+    /**
+    *@dev check the remaining amount the approved spender has left 
+    *@param _owner address
+    *@param _spender addres the owner approved for spending
+    *@return Returns the remaining allowance of tokens granted to the _spender from the _owner
     */
     function allowance(address _owner, address _spender) public view returns (uint) {
-       return allowed[_owner][_spender]; }
+       return allowed[_owner][_spender]; 
+    }
 }

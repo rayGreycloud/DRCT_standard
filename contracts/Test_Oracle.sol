@@ -17,20 +17,25 @@ contract Test_Oracle {
 
     /*Events*/
     event DocumentStored(uint _key, uint _value);
-
+    /*Modifiers*/
     modifier onlyOwner {
         require(msg.sender == owner);
         _;
     }
 
-    //Constructor - Sets owner
+    /*Functions*/
+    /**
+    *@dev Constructor - Sets owner and API
+    */
     function Test_Oracle() public {
         owner = msg.sender;
         API = "https://api.gdax.com/products/BTC-USD/ticker).price";
     }
 
-    //Allows the owner of the Oracle to store a document in the oracle_values mapping. Documents
-    //represent underlying values at a specified date (key).
+    /**
+    *@dev Allows the owner of the Oracle to store a document in the oracle_values mapping. Documents
+    *represent underlying values at a specified date (key).
+    */
     function StoreDocument(uint _key, uint _value) public onlyOwner() {
         oracle_values[_key] = _value;
         emit DocumentStored(_key, _value);

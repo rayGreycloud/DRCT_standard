@@ -8,21 +8,23 @@ import "./SafeMath.sol";
 
 
 /**
-*This contract is the specific DRCT base contract that holds the funds of the contract and
-*redistributes them based upon the change in the underlying values
+*The TokenLibrary contains the reference code used to create the specific DRCT base contract 
+*that holds the funds of the contract and redistributes them based upon the change in the
+*underlying values
 */
 library TokenLibrary{
 
     using SafeMath for uint256;
 
+    /*Variables*/
     enum SwapState {
             created,
             started,
             ended
     }
-
+    
+    /*Structs*/
     struct SwapStorage{
-        /*Variables*/
         //The Oracle address (check for list at www.github.com/DecentralizedDerivatives/Oracles)
         address oracle_address;
         //Address of the Factory that created this contract
@@ -49,11 +51,18 @@ library TokenLibrary{
         address userContract;
 
     }
-
+    /*Events*/
     event SwapCreation(address _token_address, uint _start_date, uint _end_date, uint _token_amount);
     //Emitted when the swap has been paid out
     event PaidOut(uint pay_to_long, uint pay_to_short);
 
+    /*Functions*/
+    /**
+    *@param _factory_address
+    *@param _creator address of swap creator
+    *@param _userContract 
+    *@param _start_date swap start date
+    */
     function startSwap (SwapStorage storage self, address _factory_address, address _creator, address _userContract, uint _start_date) internal {
         self.creator = _creator;
         self.factory_address = _factory_address;
@@ -61,7 +70,8 @@ library TokenLibrary{
         self.contract_details[0] = _start_date;
         self.current_state = SwapState.created;
     }
-     /*
+
+     /**
     @dev A getter function for retriving standardized variables from the factory contract
     */
     function showPrivateVars(SwapStorage storage self) internal view returns (address[5],uint, uint, uint, uint, uint){
@@ -90,12 +100,15 @@ library TokenLibrary{
         self.current_state = SwapState.started;
     }
 
+    /**
+    *@dev Getter function for contract details saved in the SwapStorage struct
+    */
     function getVariables(SwapStorage storage self) internal{
         (self.oracle_address,self.contract_details[3],self.contract_details[2],self.token_address,self.contract_details[6]) = self.factory.getVariables();
     }
 
-    /*
-    *@dev check if the oracle has been queried withing the last day? 
+    /**
+    *@dev check if the oracle has been queried withing the last day 
     */
     function oracleQuery(SwapStorage storage self) internal returns(bool){
         Oracle_Interface oracle = Oracle_Interface(self.oracle_address);
@@ -128,7 +141,7 @@ library TokenLibrary{
         return true;
     }
 
-    /*
+    /**
     *@dev This function calculates the payout of the swap. It can be called after the Swap has been tokenized.
     *The value of the underlying cannot reach zero, but rather can only get within 0.001 * the precision
     *of the Oracle.
@@ -149,7 +162,7 @@ library TokenLibrary{
         self.pay_to_short = (SafeMath.sub(200000,ratio).mul(self.token_amount)).div(self.num_DRCT_tokens).div(100000);
     }
 
-    /*
+    /**
     *@dev This function can be called after the swap is tokenized or after the Calculate function is called.
     *If the Calculate function has not yet been called, this function will call it.
     *The function then pays every token holder of both the long and short DRCT tokens
@@ -191,7 +204,7 @@ library TokenLibrary{
         return ready;
     }
 
-    /*
+    /**
     *This function pays the receiver an amount determined by the Calculate function
     *@param _receiver The recipient of the payout
     *@param _amount The amount of token the recipient holds
@@ -211,6 +224,9 @@ library TokenLibrary{
         }
     }
 
+    /**
+    @dev Getter function for swap state
+    */
     function showCurrentState(SwapStorage storage self)  internal view returns(uint) {
         return uint(self.current_state);
     }

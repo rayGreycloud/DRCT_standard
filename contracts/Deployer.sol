@@ -23,9 +23,9 @@ contract Deployer {
     /**
     *@notice The function creates a new contract
     *@dev It ensures the new contract can only be created by the factory
-    *@param _party
-    *@param user_contract global variable? 
-    *@param _start_date contract start date?
+    *@param _party address of user creating the contract
+    *@param user_contract address of userContract.sol 
+    *@param _start_date contract start date
     *@return returns the address for the new contract
     */
     function newContract(address _party, address user_contract, uint _start_date) public returns (address) {
@@ -36,8 +36,8 @@ contract Deployer {
 
     /**
      *@dev Set variables if the owner is the factory contract
-     *@param _factory
-     *@param _owner
+     *@param _factory address
+     *@param _owner address
     */
     function setVars(address _factory, address _owner) public {
         require (msg.sender == owner);

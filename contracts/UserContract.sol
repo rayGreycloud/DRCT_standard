@@ -16,17 +16,21 @@ contract UserContract{
     Wrapped_Ether internal baseToken;
     Factory internal factory;
 
+    /*Variables*/
     address public factory_address;
     address internal owner;
 
+    /**
+    @dev constructor - sets owner
+    */
     function UserContract() public {
         owner = msg.sender;
     }
 
     /**
-    *@dev Value must be sent with Initiate and enter the _amount(in wei) ?
+    *@dev Value must be sent with Initiate and enter the _amount(in wei)
     *@param _swapAdd is the address of the deployed contract created from the Factory contract
-    *@param _amount is the amount of the base tokens(short or long) in the ?
+    *@param _amount is the amount of the base tokens(short or long) in the
     *swap. For wrapped Ether, this is wei.
     */
     function Initiate(address _swapadd, uint _amount) payable public{
@@ -39,6 +43,10 @@ contract UserContract{
         swap.createSwap(_amount, msg.sender);
     }
 
+    /**
+    *@dev Set factory address, tokens and swap contracts can only be created by the factory
+    *@param _factory_address
+    */
     function setFactory(address _factory_address) public {
         require (msg.sender == owner);
         factory_address = _factory_address;
