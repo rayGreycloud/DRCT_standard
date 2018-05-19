@@ -28,7 +28,7 @@ contract Wrapped_Ether {
 
     /*Functions*/
     /**
-    @dev This function creates tokens equal in value to the amount sent to the contract
+    *@dev This function creates tokens equal in value to the amount sent to the contract
     */
     function createToken() public payable {
         require(msg.value > 0);
@@ -96,8 +96,8 @@ contract Wrapped_Ether {
 
     /**
     *@dev this function Approves a _spender an _amount of tokens to use
-    @param _spender address to approve to spend
-    @param _amount the approve spender is allowed to tranfer/spend
+    *@param _spender address to approve to spend
+    *@param _amount the approve spender is allowed to tranfer/spend
     */
     function approve(address _spender, uint _amount) public returns (bool) {
         allowed[msg.sender][_spender] = _amount;
