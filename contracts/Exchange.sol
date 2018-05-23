@@ -40,6 +40,9 @@ contract Exchange{
     mapping(address => bool) internal blacklist;
     //order_nonce;
     uint internal order_nonce;
+    //all listed tokens to owner-token-user-uint
+    mapping(address => mapping(address => uint)) userOrdersByToken;
+
 
     /*Modifiers*/
     // @dev Access modifier for Owner functionality
@@ -73,7 +76,8 @@ contract Exchange{
         require(blacklist[msg.sender] == false);
         require(_price > 0);
         ERC20_Interface token = ERC20_Interface(_tokenadd);
-        require(token.allowance(msg.sender,address(this)) >= _amount);
+        require(token.allowance(msg.sender,address(this)) >= _amount + userOrdersByToken[_tokenadd][msg.sender] );
+        userOrdersByToken[_tokenadd][msg.sender] += _amount;
         if(forSale[_tokenadd].length == 0){
             forSale[_tokenadd].push(0);
             }
@@ -201,6 +205,7 @@ contract Exchange{
         uint256 tokenIndex = forSaleIndex[_orderId];
         uint256 lastTokenIndex = forSale[_order.asset].length.sub(1);
         uint256 lastToken = forSale[_order.asset][lastTokenIndex];
+        userOrdersByToken[_order.asset][_order.maker] -= _order.amount;
         forSale[_order.asset][tokenIndex] = lastToken;
         forSaleIndex[lastToken] = tokenIndex;
         forSale[_order.asset].length--;
@@ -228,5 +233,7 @@ contract Exchange{
         userOrderIndex[lastToken] = tokenIndex;
         userOrders[_order.maker].length--;
         userOrderIndex[_orderId] = 0;
+
+
     }
 }
