@@ -133,8 +133,10 @@ contract Membership {
 
     /**
     @dev refund money if KYC/AML fails
+    @param _to address to send refund
+    @param _amount to refund. If no amount  is specified the current memberFee is refunded
     **/
-    function refund(address _to, uint _amount)  public onlyOwner {
+    function refund(address _to, uint _amount) public onlyOwner {
         require (_to != address(0));
         if (_amount == 0) {_amount = memberFee;}
         Member storage currentAddress = members[_to];
@@ -143,9 +145,13 @@ contract Membership {
         currentAddress.membershipType = 0;
         _to.transfer(_amount);
         emit Refund(_to, _amount);
-
     }
 
+    /**
+    @dev refund money if KYC/AML fails
+    @param _to address to send funds
+    @param _amount to send
+    **/
     function withdraw(address _to, uint _amount) public onlyOwner {
         _to.transfer(_amount);
     }
