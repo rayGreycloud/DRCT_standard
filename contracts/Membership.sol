@@ -148,7 +148,7 @@ contract Membership {
     }
 
     /**
-    @dev refund money if KYC/AML fails
+    @dev allow owner to withdraw funds
     @param _to address to send funds
     @param _amount to send
     **/
